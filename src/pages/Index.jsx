@@ -1,10 +1,15 @@
 import { Container, Text, VStack, Heading, Button, Box } from "@chakra-ui/react";
 import { FaRocket } from "react-icons/fa";
 import { usePosts, useAddPost } from "../integrations/supabase/index.js";
+import { useSupabaseAuth, SupabaseAuthUI } from '../integrations/supabase/auth.jsx';
+import { useState } from 'react';
 
 const Index = () => {
   const { data: posts, isLoading, isError } = usePosts();
   const addPostMutation = useAddPost();
+
+  const { session, logout } = useSupabaseAuth();
+  const [showLogin, setShowLogin] = useState(false);
 
   const handleAddPost = () => {
     addPostMutation.mutate({ name: "New Post", body: "This is a new post." });
@@ -28,6 +33,15 @@ const Index = () => {
             <Text>{post.body}</Text>
           </Box>
         ))}
+      {!session ? (
+          showLogin ? (
+            <SupabaseAuthUI />
+          ) : (
+            <Button onClick={() => setShowLogin(true)}>Login</Button>
+          )
+        ) : (
+          <Button onClick={() => { setShowLogin(false); logout(); }}>Logout {session.user.email}</Button>
+        )}
       </VStack>
     </Container>
   );
