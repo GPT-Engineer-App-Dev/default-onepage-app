@@ -7,6 +7,16 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 const SupabaseAuthContext = createContext();
 
 export const SupabaseAuthProvider = ({ children }) => {
+  return (
+    <SupabaseProvider>
+      <SupabaseAuthProviderInner>
+        {children}
+      </SupabaseAuthProviderInner>
+    </SupabaseProvider>
+  );
+}
+
+export const SupabaseAuthProviderInner = ({ children }) => {
   const [session, setSession] = useState(null);
   const queryClient = useQueryClient();
 
@@ -35,11 +45,9 @@ export const SupabaseAuthProvider = ({ children }) => {
   };
 
   return (
-    <SupabaseProvider>
-        <SupabaseAuthContext.Provider value={{ session, logout }}>
-        {children}
-        </SupabaseAuthContext.Provider>
-    </SupabaseProvider>
+    <SupabaseAuthContext.Provider value={{ session, logout }}>
+    {children}
+    </SupabaseAuthContext.Provider>
   );
 };
 
